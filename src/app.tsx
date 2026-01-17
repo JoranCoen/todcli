@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useInput } from 'ink';
-import { MainLayout, FormLayout, ListLayout } from '@/layouts';
-import { CreateProjectForm, CreateTodoForm } from '@/components/functional/forms';
 import { writeData } from '@/lib';
 import { TodoStatus } from '@/types/todo';
-import type { CreateProject, CreateTodo, Project } from '@/types';
+import { MainLayout, FormLayout, ListLayout } from '@/layouts';
+import { CreateProjectForm, CreateTodoForm } from '@/components/functional/forms';
 import type { View } from '@/types/view';
+import type { CreateProject, CreateTodo, Project } from '@/types';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>({ type: 'home' });
@@ -13,6 +13,7 @@ const App: React.FC = () => {
 
   useInput((input, key) => {
     if (key.escape) {
+      setSelectedProject(null);
       setView({ type: 'home' });
       return;
     }
@@ -22,6 +23,7 @@ const App: React.FC = () => {
         setView({ type: 'createProject' });
         break;
       case 'Q':
+        setSelectedProject(null);
         setView({ type: 'home' });
         break;
       case 'a':
@@ -37,6 +39,7 @@ const App: React.FC = () => {
 
   const handleProjectSubmit = (data: CreateProject) => {
     writeData({ type: 'project', project: { name: data.name, description: data.description } });
+    setSelectedProject(null);
     setView({ type: 'home' });
   };
 

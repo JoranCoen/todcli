@@ -1,5 +1,5 @@
 import React from 'react';
-import type {  CreateProject, } from '@/types';
+import type { CreateProject } from '@/types';
 import { type FormProps, Form } from 'ink-form';
 
 const form: FormProps = {
@@ -23,13 +23,13 @@ type CreateProjectFormProps = {
 
 const CreateProjectForm: React.FC<CreateProjectFormProps> = ({ onSubmit }) => {
   return (
-      <Form
-        {...form}
-        onSubmit={(result) => {
-          onSubmit(result as CreateProject);
-        }}
-      />
+    <Form
+      {...form}
+      onSubmit={(result) => {
+        onSubmit(result as CreateProject);
+      }}
+    />
   );
-}
+};
 
 export default CreateProjectForm;

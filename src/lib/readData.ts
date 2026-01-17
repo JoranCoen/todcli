@@ -31,5 +31,5 @@ export function readProject(projectId: number): Project | null {
 
 export function readProjects(): Project[] {
   const data = readData();
-  return Object.values(data); 
+  return Object.values(data);
 }

@@ -14,7 +14,7 @@ function FormLayout<T>({
 }: FormLayoutProps<T>): ReactElement {
   const handleSubmit = (data: T) => {
     try {
-      onSubmit(data); 
+      onSubmit(data);
       setShowFormLayout(false);
     } catch (error) {
       console.error('Failed to write data:', error);

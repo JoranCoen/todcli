@@ -7,9 +7,9 @@ export type Project = {
   createdAt: string;
   updatedAt: string;
   todos: Todo[];
-}
+};
 
 export type CreateProject = {
   name: string;
   description: string;
-}
+};

@@ -5,16 +5,16 @@ export type Todo = {
   status: TodoStatus;
   createdAt: string;
   updatedAt: string;
-}
+};
 
 export type CreateTodo = {
   title: string;
   description: string;
   status: TodoStatus;
-}
+};
 
 export enum TodoStatus {
-  Pending = "pending",
-  InProgress = "in_progress",
-  Completed = "completed",
+  Pending = 'pending',
+  InProgress = 'in_progress',
+  Completed = 'completed',
 }

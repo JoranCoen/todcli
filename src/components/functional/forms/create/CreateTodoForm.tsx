@@ -1,7 +1,7 @@
 import React from 'react';
 import type { CreateTodo, TodoStatus } from '@/types';
 import { todoStatus } from '@/constants';
-import { type FormProps, type AbstractFormField , Form, } from 'ink-form';
+import { type FormProps, type AbstractFormField, Form } from 'ink-form';
 
 export interface FormFieldSelectEnum<T> extends AbstractFormField<'select', T> {
   options: { label: string; value: T }[];
@@ -16,7 +16,12 @@ const form: FormProps = {
         fields: [
           { type: 'string', name: 'name', label: 'Name' },
           { type: 'string', name: 'description', label: 'Description', required: false },
-          { type: 'select', name: 'status', label: 'Status', options: todoStatus } as FormFieldSelectEnum<TodoStatus>,
+          {
+            type: 'select',
+            name: 'status',
+            label: 'Status',
+            options: todoStatus,
+          } as FormFieldSelectEnum<TodoStatus>,
         ],
       },
     ],
@@ -29,13 +34,13 @@ type CreateTodoFormProps = {
 
 const CreateTodoForm: React.FC<CreateTodoFormProps> = ({ onSubmit }) => {
   return (
-      <Form
-        {...form}
-        onSubmit={(result) => {
-          onSubmit(result as CreateTodo);
-        }}
-      />
+    <Form
+      {...form}
+      onSubmit={(result) => {
+        onSubmit(result as CreateTodo);
+      }}
+    />
   );
-}
+};
 
 export default CreateTodoForm;

@@ -6,4 +6,20 @@ const todoStatus = [
   { label: 'Completed', value: TodoStatus.Completed },
 ];
 
-export { todoStatus };
+enum Gradient {
+  Cristal = 'cristal',
+  Teen = 'teen',
+  Mind = 'mind',
+  Morning = 'morning',
+  Vice = 'vice',
+  Passion = 'passion',
+  Fruit = 'fruit',
+  Instagram = 'instagram',
+  Atlas = 'atlas',
+  Retro = 'retro',
+  Summer = 'summer',
+  Pastel = 'pastel',
+  Rainbow = 'rainbow',
+}
+
+export { todoStatus, Gradient };

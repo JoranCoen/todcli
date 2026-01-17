@@ -1,9 +1,10 @@
 import type { Project } from '@/types';
+import { Gradient } from '@/constants';
 
 export type Item = {
   label: string;
-  value: string
-}
+  value: string;
+};
 
 export type NavItem = {
   label: string;
@@ -11,5 +12,4 @@ export type NavItem = {
   gradient: Gradient;
   value: string;
   project: Project | null;
-}
-
+};
