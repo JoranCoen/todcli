@@ -1,9 +1,12 @@
+import type { Todo } from '@/types';
+
 export type Project = {
-  id: string;
+  id: number;
   name: string;
   description: string;
   createdAt: string;
   updatedAt: string;
+  todos: Todo[];
 }
 
 export type CreateProject = {

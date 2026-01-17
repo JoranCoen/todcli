@@ -1,6 +1,6 @@
 export type Todo = {
-  id: string;
-  name: string;
+  id: number;
+  title: string;
   description: string;
   status: TodoStatus;
   createdAt: string;
@@ -8,7 +8,7 @@ export type Todo = {
 }
 
 export type CreateTodo = {
-  name: string;
+  title: string;
   description: string;
   status: TodoStatus;
 }

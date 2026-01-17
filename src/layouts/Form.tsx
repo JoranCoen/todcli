@@ -1,19 +1,20 @@
 import React, { type ReactElement } from 'react';
 import { Box } from 'ink';
-import { writeData } from '@/lib';
 
 type FormLayoutProps<T> = {
   setShowFormLayout: (show: boolean) => void;
   FormComponent: React.ComponentType<{ onSubmit: (data: T) => void }>;
+  onSubmit: (data: T) => void;
 };
 
 function FormLayout<T>({
   setShowFormLayout,
   FormComponent,
+  onSubmit,
 }: FormLayoutProps<T>): ReactElement {
   const handleSubmit = (data: T) => {
     try {
-      writeData<T>(data);
+      onSubmit(data); 
       setShowFormLayout(false);
     } catch (error) {
       console.error('Failed to write data:', error);

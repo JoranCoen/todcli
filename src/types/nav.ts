@@ -8,23 +8,8 @@ export type Item = {
 export type NavItem = {
   label: string;
   content: string;
-  gradient: NavGradient;
+  gradient: Gradient;
   value: string;
   project: Project | null;
 }
 
-export enum NavGradient {
-  Cristal = 'cristal',
-  Teen = 'teen',
-  Mind = 'mind',
-  Morning = 'morning',
-  Vice = 'vice',
-  Passion = 'passion',
-  Fruit = 'fruit',
-  Instagram = 'instagram',
-  Atlas = 'atlas',
-  Retro = 'retro',
-  Summer = 'summer',
-  Pastel = 'pastel',
-  Rainbow = 'rainbow',
-}

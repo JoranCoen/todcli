@@ -9,7 +9,7 @@ export interface FormFieldSelectEnum<T> extends AbstractFormField<'select', T> {
 
 const form: FormProps = {
   form: {
-    title: 'Create Project',
+    title: 'Create Todo',
     sections: [
       {
         title: 'Name & Description',

@@ -2,48 +2,47 @@ import React, { useState } from 'react';
 import { Box } from 'ink';
 import { SideBar } from '@/components/functional/layouts';
 import { ContentPane } from '@/components/ui';
-import { NavGradient } from '@/types/nav';
-import { readData } from '@/lib';
-import type { Project, Item, NavItem } from '@/types';
+import { Gradient } from '@/types';
+import { readProjects } from '@/lib';
+import type { Project, Item, NavItem, View } from '@/types';
 
 type ListLayoutProps = {
   onSelectProject: (project: Project | null) => void;
 };
 
 const ListLayout: React.FC<ListLayoutProps> = ({ onSelectProject }) => {
-  const projects = readData<Project>();
+  const projects = readProjects(); 
 
   const navItems: NavItem[] = [
-    { label: 'Home', gradient: NavGradient.Pastel, content: 'Home', value: 'home', project: null },
-    ...projects.map((p) => ({
-      label: p.name,
-      gradient: NavGradient.Retro,
-      content: `Content for ${p.name}`,
-      value: p.id.toString(),
-      project: p,
+    { label: 'Home', gradient: Gradient.Pastel, content: 'Home', value: 'home', project: null },
+    ...projects.map((project) => ({
+      label: project.name,
+      gradient: Gradient.Retro,
+      content: `Content for ${project.name}`,
+      value: project.id.toString(),
+      project,
     })),
   ];
 
-  const [activeNav, setActiveNav] = useState<NavItem>(navItems[0]);
+  const [activeNavItem, setActiveNavItem] = useState<NavItem>(navItems[0]);
 
   const handleSelect = (item: Item) => {
     const selected = navItems.find((nav) => nav.value === item.value);
     if (!selected) return;
 
-    setActiveNav(selected);
+    setActiveNavItem(selected);
     onSelectProject(selected.project);
   };
 
   const sidebarItems: Item[] = navItems.map(({ label, value }) => ({ label, value }));
 
+  const currentView: View =
+    activeNavItem.project ? { type: 'project', project: activeNavItem.project } : { type: 'home' };
+
   return (
     <Box width="100%" height="100%" flexDirection="row" gap={4}>
       <SideBar navItems={sidebarItems} onSelect={handleSelect} />
-      <ContentPane
-        view={
-          activeNav.project ? { type: 'project', project: activeNav.project } : { type: 'home' }
-        }
-      />
+      <ContentPane view={currentView} />
     </Box>
   );
 };
