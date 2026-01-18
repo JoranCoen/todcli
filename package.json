@@ -3,8 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "main": "dist/cli.js",
   "bin": {
-    "tocli": "./dist/cli.js"
+    "todcli": "./dist/cli.js"
   },
   "scripts": {
     "build": "vite build",
@@ -14,6 +15,7 @@
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
+    "@tqman/ink-table": "^0.0.0-development",
     "fullscreen-ink": "^0.1.0",
     "ink": "^6.6.0",
     "ink-big-text": "^2.0.0",

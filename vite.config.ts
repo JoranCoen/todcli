@@ -1,29 +1,19 @@
-import { defineConfig } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { defineConfig } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
+  plugins: [tsconfigPaths(), react()],
   build: {
-    ssr: true,
-    target: "node20",
-    outDir: "dist",
-    lib: {
-      entry: "src/cli.tsx",
-      formats: ["es"],
-    },
+    ssr: 'src/cli.tsx',
+    target: 'node20',
+    outDir: 'dist',
     rollupOptions: {
-      external: [
-        "react",
-        "ink",
-        "ink-select-input",
-        "node:fs",
-        "node:path",
-        "node:util",
-      ],
+      external: ['react', 'ink', 'ink-select-input', 'node:fs', 'node:path', 'node:util'],
       output: {
-        entryFileNames: "cli.js",
+        format: 'esm', 
+        entryFileNames: '[name].js', 
       },
     },
   },
 });
-

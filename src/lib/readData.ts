@@ -33,3 +33,8 @@ export function readProjects(): Project[] {
   const data = readData();
   return Object.values(data);
 }
+
+export function readTodos(projectId: number) {
+  const data = readProject(projectId);
+  return data ? Object.values(data.todos) : [];
+}

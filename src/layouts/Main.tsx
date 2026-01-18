@@ -12,8 +12,7 @@ const MainLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       flexDirection="column"
       gap={2}
       paddingBottom={1}
-      paddingLeft={4}
-      paddingRight={4}
+      paddingX={4}
     >
       <Gradient name="retro">
         <BigText text="ToDCLI" />
