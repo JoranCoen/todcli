@@ -23,7 +23,7 @@ function FormLayout<T>({
 
   return (
     <Box
-      borderStyle="single"
+      borderStyle="round"
       width="100%"
       flexDirection="column"
       justifyContent="center"

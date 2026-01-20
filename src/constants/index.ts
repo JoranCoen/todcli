@@ -1,12 +1,6 @@
-import { TodoStatus } from '@/types/todo';
+import { IssueType } from '@/types/issue';
 
-const todoStatus = [
-  { label: 'Pending', value: TodoStatus.Pending },
-  { label: 'In Progress', value: TodoStatus.InProgress },
-  { label: 'Completed', value: TodoStatus.Completed },
-];
-
-enum Gradient {
+enum GradientMap {
   Cristal = 'cristal',
   Teen = 'teen',
   Mind = 'mind',
@@ -20,6 +14,13 @@ enum Gradient {
   Summer = 'summer',
   Pastel = 'pastel',
   Rainbow = 'rainbow',
-}
+};
 
-export { todoStatus, Gradient };
+const issueColorMap = {
+  [IssueType.Error]: 'red',
+  [IssueType.Warning]: 'yellow',
+  [IssueType.Bug]: 'magenta',
+  [IssueType.Info]: 'cyan',
+};
+
+export { GradientMap, issueColorMap };

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Box } from 'ink';
 import { SideBar } from '@/components/functional/layouts';
 import { ContentPane } from '@/components/ui';
-import { Gradient } from '@/constants';
+import { GradientMap } from '@/constants';
 import { readProjects } from '@/lib';
 import type { Project, Item, NavItem, View } from '@/types';
 
@@ -14,10 +14,10 @@ const ListLayout: React.FC<ListLayoutProps> = ({ onSelectProject }) => {
   const projects = readProjects();
 
   const navItems: NavItem[] = [
-    { label: 'Home', gradient: Gradient.Pastel, content: 'Home', value: 'home', project: null },
+    { label: 'Home', gradient: GradientMap.Pastel, content: 'Home', value: 'home', project: null },
     ...projects.map((project) => ({
       label: project.name,
-      gradient: Gradient.Retro,
+      gradient: GradientMap.Retro,
       content: `Content for ${project.name}`,
       value: project.id.toString(),
       project,

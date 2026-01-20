@@ -1,5 +1,5 @@
 import type { Project } from '@/types';
-import { Gradient } from '@/constants';
+import { GradientMap } from '@/constants';
 
 export type Item = {
   label: string;
@@ -9,7 +9,7 @@ export type Item = {
 export type NavItem = {
   label: string;
   content: string;
-  gradient: Gradient;
+  gradient: GradientMap;
   value: string;
   project: Project | null;
 };

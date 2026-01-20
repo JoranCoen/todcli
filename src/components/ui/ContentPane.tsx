@@ -13,7 +13,7 @@ type ContentPaneProps = {
 const ContentPane: React.FC<ContentPaneProps> = ({ view }) => {
   if (view.type === 'home') {
     return (
-      <Box borderStyle="single" width="100%" height="100%" flexDirection="column" paddingX={4}>
+      <Box borderStyle="round" width="100%" height="100%" flexDirection="column" paddingX={4}>
         <Gradient name="pastel">
           <BigText text="Home" />
         </Gradient>
@@ -33,7 +33,7 @@ const ContentPane: React.FC<ContentPaneProps> = ({ view }) => {
       UpdatedAt: t.updatedAt.padEnd(20, ' '),
     }));
     return (
-      <Box borderStyle="single" width="100%" height="100%" flexDirection="column" paddingX={4}>
+      <Box borderStyle="round" width="100%" height="100%" flexDirection="column" paddingX={4}>
         <Gradient name="retro">
           <BigText text={view.project.name} />
         </Gradient>

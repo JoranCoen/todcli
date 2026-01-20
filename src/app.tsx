@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import { useInput } from 'ink';
 import { writeData } from '@/lib';
 import { TodoStatus } from '@/types/todo';
-import { MainLayout, FormLayout, ListLayout } from '@/layouts';
+import { IssueType } from '@/types/issue';
+import { MainLayout, FormLayout, ListLayout, IssueLayout } from '@/layouts';
 import { CreateProjectForm, CreateTodoForm } from '@/components/functional/forms';
-import type { View } from '@/types/view';
-import type { CreateProject, CreateTodo, Project } from '@/types';
+import type { CreateProject, CreateTodo, Project, View } from '@/types';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>({ type: 'home' });
@@ -27,9 +27,19 @@ const App: React.FC = () => {
         setView({ type: 'home' });
         break;
       case 'a':
-        if (selectedProject) {
-          setView({ type: 'createTodo', project: selectedProject });
+        if (!selectedProject) {
+          setView({
+            type: 'issue',
+            issue: {
+              label: 'Error',
+              content: 'No project selected for the todo',
+              type: IssueType.Error,
+            },
+          });
+          break;
         }
+
+        setView({ type: 'createTodo', project: selectedProject });
         break;
       case 'q':
         setView({ type: 'home' });
@@ -45,8 +55,14 @@ const App: React.FC = () => {
 
   const handleTodoSubmit = (data: CreateTodo) => {
     if (!selectedProject) {
-      console.warn('No project selected for the todo');
-      setView({ type: 'home' });
+      setView({
+        type: 'issue',
+        issue: {
+          label: 'Error',
+          content: 'No project selected for the todo',
+          type: IssueType.Error,
+        },
+      });
       return;
     }
     writeData({
@@ -59,6 +75,8 @@ const App: React.FC = () => {
 
   return (
     <MainLayout>
+      {view.type === 'issue' && <IssueLayout issue={view.issue} />}
+
       {view.type === 'createProject' && (
         <FormLayout<CreateProject>
           setShowFormLayout={() => setView({ type: 'home' })}

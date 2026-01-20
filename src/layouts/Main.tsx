@@ -10,6 +10,8 @@ const MainLayout: React.FC<React.PropsWithChildren> = ({ children }) => {
       width="100%"
       height="100%"
       flexDirection="column"
+      alignItems="center"
+      justifyContent="center"
       gap={2}
       paddingBottom={1}
       paddingX={4}

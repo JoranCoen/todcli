@@ -1,9 +1,15 @@
 import React from 'react';
-import type { CreateTodo, TodoStatus } from '@/types';
-import { todoStatus } from '@/constants';
+import { TodoStatus } from '@/types/todo';
+import type { CreateTodo } from '@/types';
 import { type FormProps, type AbstractFormField, Form } from 'ink-form';
 
-export interface FormFieldSelectEnum<T> extends AbstractFormField<'select', T> {
+const todoStatus = [
+  { label: 'Pending', value: TodoStatus.Pending },
+  { label: 'In Progress', value: TodoStatus.InProgress },
+  { label: 'Completed', value: TodoStatus.Completed },
+];
+
+interface FormFieldSelectEnum<T> extends AbstractFormField<'select', T> {
   options: { label: string; value: T }[];
 }
 
@@ -21,6 +27,7 @@ const form: FormProps = {
             name: 'status',
             label: 'Status',
             options: todoStatus,
+            initialValue: TodoStatus.Pending,
           } as FormFieldSelectEnum<TodoStatus>,
         ],
       },

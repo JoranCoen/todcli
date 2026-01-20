@@ -10,7 +10,7 @@ type SideBarProps = {
 
 const SideBar: React.FC<SideBarProps> = ({ navItems, onSelect }) => {
   return (
-    <Box borderStyle="single" height="100%" width={40}>
+    <Box borderStyle="round" height="100%" width={40}>
       <SelectInput items={navItems} onSelect={onSelect} />
     </Box>
   );
