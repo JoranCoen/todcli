@@ -1,6 +1,7 @@
 import React, { type ReactElement } from 'react';
 import { Box } from 'ink';
 import { IssueType } from '@/types/issue';
+import { ViewType } from '@/types/view';
 import type { View } from '@/types';
 
 type FormLayoutProps<T> = {
@@ -15,7 +16,7 @@ function FormLayout<T>({ onSubmit, setView, FormComponent }: FormLayoutProps<T>)
       onSubmit(data);
     } catch (error) {
       setView({
-        type: 'issue',
+        type: ViewType.Issue,
         issue: {
           label: 'Submission Error',
           content: (error as Error).message,

@@ -2,6 +2,7 @@ import React from 'react';
 import { Box } from 'ink';
 import { SideBar } from '@/components/functional/layouts';
 import { ContentPane } from '@/components/ui';
+import { ViewType } from '@/types/view';
 import type { Project, View, Item } from '@/types';
 
 type Props = {
@@ -20,7 +21,7 @@ const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProj
   ];
 
   const handleSelect = (item: Item) => {
-    if (item.value === 'home') {
+    if (item.value === ViewType.Home) {
       onSelectProject(null);
     } else {
       onSelectProject(Number(item.value));
@@ -35,10 +36,10 @@ const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProj
   const currentView: View =
     selectedProjectId != null
       ? {
-          type: 'project',
+          type: ViewType.Project,
           project: projects.find((p) => p.id === selectedProjectId)!,
         }
-      : { type: 'home' };
+      : { type: ViewType.Home };
 
   return (
     <Box width="100%" height="100%" flexDirection="row" gap={2}>

@@ -8,7 +8,7 @@ type IssueLayoutProps = {
 };
 
 const IssueLayout: React.FC<IssueLayoutProps> = ({ issue }) => {
-  const issueColor = issueColorMap[issue.type] || 'white';
+  const issueColor = issueColorMap[issue.type];
 
   return (
     <Box

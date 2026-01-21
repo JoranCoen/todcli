@@ -2,6 +2,7 @@ import fs from 'fs';
 import { DATA_FILE, CONFIG_DIR } from '@/lib';
 import { TodoStatus } from '@/types/todo';
 import { IssueType } from '@/types/issue';
+import { ViewType } from '@/types/view';
 import type { Project, Todo, View } from '@/types';
 
 type WriteResult = { ok: true; project: Project } | { ok: false; view: View };
@@ -46,7 +47,7 @@ export const writeData = {
       return {
         ok: false,
         view: {
-          type: 'issue',
+          type: ViewType.Issue,
           issue: {
             label: 'Error',
             content: `Project with ID ${projectId} not found`,
@@ -71,6 +72,33 @@ export const writeData = {
 
     project.todos.push(newTodo);
     project.updatedAt = new Date().toISOString();
+
+    writeFile(data);
+
+    return { ok: true, project };
+  },
+
+  deleteProject(projectId: number): WriteResult {
+    const data = readData();
+
+    const projectKey = Object.keys(data).find((k) => data[k].id === projectId);
+
+    if (!projectKey) {
+      return {
+        ok: false,
+        view: {
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: `Project with ID ${projectId} not found`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    const project = data[projectKey];
+    delete data[projectKey];
 
     writeFile(data);
 

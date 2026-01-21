@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { DATA_FILE, CONFIG_DIR } from '@/lib';
 import { IssueType } from '@/types/issue';
+import { ViewType } from '@/types/view';
 import type { Project, View } from '@/types';
 
 type ReadResult<T> = { ok: true; data: T } | { ok: false; view: View };
@@ -19,7 +20,7 @@ export function readData(): ReadResult<Record<string, Project>> {
       return {
         ok: false,
         view: {
-          type: 'issue',
+          type: ViewType.Issue,
           issue: {
             label: 'Error',
             content: 'Data file does not contain a valid object',
@@ -34,7 +35,7 @@ export function readData(): ReadResult<Record<string, Project>> {
     return {
       ok: false,
       view: {
-        type: 'issue',
+        type: ViewType.Issue,
         issue: {
           label: 'Error',
           content: err instanceof Error ? err.message : 'Unknown error reading data',

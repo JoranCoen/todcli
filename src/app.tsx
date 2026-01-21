@@ -1,13 +1,14 @@
 import React, { useState } from 'react';
 import { useInput } from 'ink';
-import { MainLayout, FormLayout, ListLayout, IssueLayout } from '@/layouts';
+import { MainLayout, FormLayout, ListLayout, IssueLayout, ConfirmationLayout } from '@/layouts';
 import { CreateProjectForm, CreateTodoForm } from '@/components/functional/forms';
 import { writeData, readProjects } from '@/lib';
 import { IssueType } from '@/types/issue';
+import { ViewType } from '@/types/view';
 import type { CreateProject, CreateTodo, Project, View } from '@/types';
 
 const App: React.FC = () => {
-  const [view, setView] = useState<View>({ type: 'home' });
+  const [view, setView] = useState<View>({ type: ViewType.Home });
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
 
   const getProjects = (): Project[] => {
@@ -26,18 +27,26 @@ const App: React.FC = () => {
 
   useInput((input, key) => {
     if (key.escape) {
+      if (selectedProject) {
+        setView({
+          type: 'project',
+          project: selectedProject,
+        });
+        return;
+      }
+
       setSelectedProjectId(null);
-      setView({ type: 'home' });
+      setView({ type: ViewType.Home });
     }
 
     if (key.ctrl && input === 'a') {
-      setView({ type: 'createProject' });
+      setView({ type: ViewType.CreateProject });
     }
 
     if (key.ctrl && input === 't') {
       if (!selectedProject) {
         setView({
-          type: 'issue',
+          type: ViewType.Issue,
           issue: {
             label: 'Error',
             content: 'No project selected',
@@ -47,7 +56,26 @@ const App: React.FC = () => {
         return;
       }
 
-      setView({ type: 'createTodo', project: selectedProject });
+      setView({ type: ViewType.CreateTodo, project: selectedProject });
+    }
+
+    if (key.ctrl && input === 'd') {
+      if (!selectedProject) {
+        setView({
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: 'No project selected',
+            type: IssueType.Error,
+          },
+        });
+        return;
+      }
+
+      setView({
+        type: ViewType.Confirmation,
+        message: `Are you sure you want to delete project "${selectedProject.name}"?`,
+      });
     }
   });
 
@@ -61,7 +89,7 @@ const App: React.FC = () => {
 
     setProjects((prev) => [...prev, result.project]);
     setSelectedProjectId(result.project.id);
-    setView({ type: 'project', project: result.project });
+    setView({ type: ViewType.Project, project: result.project });
   };
 
   const handleCreateTodo = (data: CreateTodo) => {
@@ -76,12 +104,38 @@ const App: React.FC = () => {
 
     setProjects(getProjects());
     setSelectedProjectId(result.project.id);
-    setView({ type: 'project', project: result.project });
+    setView({ type: ViewType.Project, project: result.project });
+  };
+
+  const handleConfirmation = (confirmed: boolean) => {
+    if (!selectedProject) return;
+
+    if (confirmed) {
+      const result = writeData.deleteProject(selectedProject.id);
+      if (!result.ok) {
+        setView(result.view);
+        return;
+      }
+
+      setProjects(getProjects());
+      setSelectedProjectId(null);
+      setView({ type: ViewType.Home });
+    } else {
+      setView({ type: ViewType.Project, project: selectedProject });
+    }
+    setView({ type: ViewType.Project, project: selectedProject });
   };
 
   return (
     <MainLayout>
       {view.type === 'issue' && <IssueLayout issue={view.issue} />}
+
+      {view.type === 'confirmation' && selectedProject && (
+        <ConfirmationLayout
+          message={`Are you sure you want to delete project "${selectedProject.name}"?`}
+          setConfirmation={handleConfirmation}
+        />
+      )}
 
       {view.type === 'createProject' && (
         <FormLayout
