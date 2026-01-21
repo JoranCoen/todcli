@@ -1,5 +1,5 @@
 #!/usr/bin/env node
 import { withFullScreen } from 'fullscreen-ink';
-import App from './app.js';
+import App from './app';
 
 withFullScreen(<App />).start();

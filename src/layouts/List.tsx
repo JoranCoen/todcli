@@ -1,5 +1,5 @@
 import { SideBar, ContentPane } from '@/components/functional/layouts';
-import type { Item, Project, Todo, View } from '@/types';
+import type { Item, Project, View } from '@/types';
 import { ViewType } from '@/types/view';
 import { Box } from 'ink';
 import React from 'react';
