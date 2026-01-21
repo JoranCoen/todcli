@@ -14,7 +14,7 @@ enum GradientMap {
   Summer = 'summer',
   Pastel = 'pastel',
   Rainbow = 'rainbow',
-};
+}
 
 const issueColorMap = {
   [IssueType.Error]: 'red',

@@ -1,23 +1,27 @@
 import React, { type ReactElement } from 'react';
 import { Box } from 'ink';
+import { IssueType } from '@/types/issue';
+import type { View } from '@/types';
 
 type FormLayoutProps<T> = {
-  setShowFormLayout: (show: boolean) => void;
-  FormComponent: React.ComponentType<{ onSubmit: (data: T) => void }>;
   onSubmit: (data: T) => void;
+  setView: (view: View) => void;
+  FormComponent: React.ComponentType<{ onSubmit: (data: T) => void }>;
 };
 
-function FormLayout<T>({
-  setShowFormLayout,
-  FormComponent,
-  onSubmit,
-}: FormLayoutProps<T>): ReactElement {
+function FormLayout<T>({ onSubmit, setView, FormComponent }: FormLayoutProps<T>): ReactElement {
   const handleSubmit = (data: T) => {
     try {
       onSubmit(data);
-      setShowFormLayout(false);
     } catch (error) {
-      console.error('Failed to write data:', error);
+      setView({
+        type: 'issue',
+        issue: {
+          label: 'Submission Error',
+          content: (error as Error).message,
+          type: IssueType.Error,
+        },
+      });
     }
   };
 
@@ -28,15 +32,8 @@ function FormLayout<T>({
       flexDirection="column"
       justifyContent="center"
       alignItems="center"
-      padding={1}
     >
-      <Box
-        width="60%"
-        flexDirection="column"
-        justifyContent="center"
-        alignItems="center"
-        padding={1}
-      >
+      <Box width="60%" flexDirection="column">
         <FormComponent onSubmit={handleSubmit} />
       </Box>
     </Box>

@@ -1,8 +1,8 @@
-export type Issue = {       
-  label: string;     
-  content: string;    
+export type Issue = {
+  label: string;
+  content: string;
   type: IssueType;
-}
+};
 
 export enum IssueType {
   Error = 'error',
@@ -10,4 +10,3 @@ export enum IssueType {
   Bug = 'bug',
   Info = 'info',
 }
-

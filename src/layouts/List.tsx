@@ -1,48 +1,48 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box } from 'ink';
 import { SideBar } from '@/components/functional/layouts';
 import { ContentPane } from '@/components/ui';
-import { GradientMap } from '@/constants';
-import { readProjects } from '@/lib';
-import type { Project, Item, NavItem, View } from '@/types';
+import type { Project, View, Item } from '@/types';
 
-type ListLayoutProps = {
-  onSelectProject: (project: Project | null) => void;
+type Props = {
+  projects: Project[];
+  selectedProjectId: number | null;
+  onSelectProject: (id: number | null) => void;
 };
 
-const ListLayout: React.FC<ListLayoutProps> = ({ onSelectProject }) => {
-  const projects = readProjects();
-
-  const navItems: NavItem[] = [
-    { label: 'Home', gradient: GradientMap.Pastel, content: 'Home', value: 'home', project: null },
-    ...projects.map((project) => ({
-      label: project.name,
-      gradient: GradientMap.Retro,
-      content: `Content for ${project.name}`,
-      value: project.id.toString(),
-      project,
+const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProject }) => {
+  const navItems = [
+    { label: 'Home', value: 'home' },
+    ...projects.map((p) => ({
+      label: p.name,
+      value: String(p.id),
     })),
   ];
 
-  const [activeNavItem, setActiveNavItem] = useState<NavItem>(navItems[0]);
-
   const handleSelect = (item: Item) => {
-    const selected = navItems.find((nav) => nav.value === item.value);
-    if (!selected) return;
-
-    setActiveNavItem(selected);
-    onSelectProject(selected.project);
+    if (item.value === 'home') {
+      onSelectProject(null);
+    } else {
+      onSelectProject(Number(item.value));
+    }
   };
 
-  const sidebarItems: Item[] = navItems.map(({ label, value }) => ({ label, value }));
+  const selectedIndex =
+    selectedProjectId != null
+      ? navItems.findIndex((i) => i.value === String(selectedProjectId))
+      : 0;
 
-  const currentView: View = activeNavItem.project
-    ? { type: 'project', project: activeNavItem.project }
-    : { type: 'home' };
+  const currentView: View =
+    selectedProjectId != null
+      ? {
+          type: 'project',
+          project: projects.find((p) => p.id === selectedProjectId)!,
+        }
+      : { type: 'home' };
 
   return (
-    <Box width="100%" height="100%" flexDirection="row" gap={4}>
-      <SideBar navItems={sidebarItems} onSelect={handleSelect} />
+    <Box width="100%" height="100%" flexDirection="row" gap={2}>
+      <SideBar navItems={navItems} initialIndex={selectedIndex} onSelect={handleSelect} />
       <ContentPane view={currentView} />
     </Box>
   );

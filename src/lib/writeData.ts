@@ -1,66 +1,79 @@
 import fs from 'fs';
 import { DATA_FILE, CONFIG_DIR } from '@/lib';
-import type { Project, Todo } from '@/types';
 import { TodoStatus } from '@/types/todo';
+import { IssueType } from '@/types/issue';
+import type { Project, Todo, View } from '@/types';
 
-type WriteDataPayload =
-  | { type: 'project'; project: Partial<Project> }
-  | { type: 'todo'; projectId: number; todo: Partial<Todo> };
+type WriteResult = { ok: true; project: Project } | { ok: false; view: View };
 
-export function writeData(payload: WriteDataPayload) {
-  try {
-    fs.mkdirSync(CONFIG_DIR, { recursive: true });
-
-    const data: Record<string, Project> = fs.existsSync(DATA_FILE)
-      ? JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'))
-      : {};
-
-    if (payload.type === 'project') {
-      const nextProjectId = Object.values(data).reduce((max, p) => Math.max(max, p.id), 0) + 1;
-
-      const projectId = payload.project.id ?? nextProjectId;
-
-      const project: Project = {
-        id: projectId,
-        name: payload.project.name ?? `Project ${projectId}`,
-        description: payload.project.description ?? '',
-        todos: payload.project.todos ?? [],
-        createdAt: payload.project.createdAt ?? new Date().toISOString(),
-        updatedAt: payload.project.updatedAt ?? new Date().toISOString(),
-      };
-
-      const key = `project${project.id}`;
-      data[key] = project;
-    }
-
-    if (payload.type === 'todo') {
-      const projectKey = Object.keys(data).find((k) => data[k].id === payload.projectId);
-
-      if (!projectKey) {
-        console.warn(`Project with id ${payload.projectId} not found`);
-        return;
-      }
-
-      const project = data[projectKey];
-      if (!Array.isArray(project.todos)) project.todos = [];
-
-      const nextTodoId = project.todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
-
-      const todo: Todo = {
-        id: payload.todo.id ?? nextTodoId,
-        title: payload.todo.title ?? `Todo ${nextTodoId}`,
-        description: payload.todo.description ?? '',
-        status: payload.todo.status ?? TodoStatus.Pending,
-        createdAt: payload.todo.createdAt ?? new Date().toISOString(),
-        updatedAt: payload.todo.updatedAt ?? new Date().toISOString(),
-      };
-
-      project.todos.push(todo);
-      project.updatedAt = new Date().toISOString();
-    }
-
-    fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
-  } catch (err) {
-    console.error('Failed to write data:', err);
-  }
+function readData(): Record<string, Project> {
+  if (!fs.existsSync(DATA_FILE)) return {};
+  return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'));
 }
+
+function writeFile(data: Record<string, Project>) {
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  fs.writeFileSync(DATA_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+export const writeData = {
+  createProject(project: Partial<Project>): WriteResult {
+    const data = readData();
+
+    const nextId = Object.values(data).reduce((max, p) => Math.max(max, p.id), 0) + 1;
+
+    const newProject: Project = {
+      id: nextId,
+      name: project.name ?? `Project ${nextId}`,
+      description: project.description ?? '',
+      todos: [],
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    data[`project${nextId}`] = newProject;
+    writeFile(data);
+
+    return { ok: true, project: newProject };
+  },
+
+  createTodo(projectId: number, todo: Partial<Todo>): WriteResult {
+    const data = readData();
+
+    const projectKey = Object.keys(data).find((k) => data[k].id === projectId);
+
+    if (!projectKey) {
+      return {
+        ok: false,
+        view: {
+          type: 'issue',
+          issue: {
+            label: 'Error',
+            content: `Project with ID ${projectId} not found`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    const project = data[projectKey];
+
+    const nextTodoId = project.todos.reduce((max, t) => Math.max(max, t.id), 0) + 1;
+
+    const newTodo: Todo = {
+      id: nextTodoId,
+      title: todo.title ?? `Todo ${nextTodoId}`,
+      description: todo.description ?? '',
+      status: todo.status ?? TodoStatus.Pending,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+    };
+
+    project.todos.push(newTodo);
+    project.updatedAt = new Date().toISOString();
+
+    writeFile(data);
+
+    return { ok: true, project };
+  },
+};

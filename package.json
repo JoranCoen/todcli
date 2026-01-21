@@ -10,7 +10,7 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "show": "npm run build && node dist/cli.js",
+    "show": "yarn build && node dist/cli.js",
     "test": "prettier --check . && xo && ava",
     "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\""
   },

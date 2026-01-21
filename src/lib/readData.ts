@@ -1,40 +1,62 @@
 import fs from 'fs';
 import { DATA_FILE, CONFIG_DIR } from '@/lib';
-import type { Project } from '@/types';
+import { IssueType } from '@/types/issue';
+import type { Project, View } from '@/types';
 
-export function readData(): Record<string, Project> {
+type ReadResult<T> = { ok: true; data: T } | { ok: false; view: View };
+
+export function readData(): ReadResult<Record<string, Project>> {
   try {
     fs.mkdirSync(CONFIG_DIR, { recursive: true });
 
-    if (!fs.existsSync(DATA_FILE)) return {};
+    if (!fs.existsSync(DATA_FILE)) return { ok: true, data: {} };
 
     const raw = fs.readFileSync(DATA_FILE, 'utf-8');
-    if (!raw.trim()) return {};
+    if (!raw.trim()) return { ok: true, data: {} };
 
     const parsed = JSON.parse(raw);
     if (typeof parsed !== 'object' || Array.isArray(parsed)) {
-      console.warn('readData(): data file does not contain a valid object');
-      return {};
+      return {
+        ok: false,
+        view: {
+          type: 'issue',
+          issue: {
+            label: 'Error',
+            content: 'Data file does not contain a valid object',
+            type: IssueType.Error,
+          },
+        },
+      };
     }
 
-    return parsed as Record<string, Project>;
+    return { ok: true, data: parsed as Record<string, Project> };
   } catch (err) {
-    console.error('Failed to read data:', err);
-    return {};
+    return {
+      ok: false,
+      view: {
+        type: 'issue',
+        issue: {
+          label: 'Error',
+          content: err instanceof Error ? err.message : 'Unknown error reading data',
+          type: IssueType.Error,
+        },
+      },
+    };
   }
 }
 
-export function readProject(projectId: number): Project | null {
-  const data = readData();
-  return Object.values(data).find((p) => p.id === projectId) ?? null;
+export function readProject(projectId: number): ReadResult<Project | null> {
+  const result = readData();
+  if (!result.ok) return result;
+
+  const project = Object.values(result.data).find((p) => p.id === projectId) ?? null;
+  return { ok: true, data: project };
 }
 
-export function readProjects(): Project[] {
-  const data = readData();
-  return Object.values(data);
-}
+export function readProjects(): ReadResult<Project[]> {
+  const result = readData();
+  if (!result.ok) return result;
 
-export function readTodos(projectId: number) {
-  const data = readProject(projectId);
-  return data ? Object.values(data.todos) : [];
+  const projects = Object.values(result.data);
+  return { ok: true, data: projects };
 }
