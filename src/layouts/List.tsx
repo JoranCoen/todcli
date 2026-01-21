@@ -1,17 +1,22 @@
-import React from 'react';
-import { Box } from 'ink';
-import { SideBar } from '@/components/functional/layouts';
-import { ContentPane } from '@/components/ui';
+import { SideBar, ContentPane } from '@/components/functional/layouts';
+import type { Item, Project, Todo, View } from '@/types';
 import { ViewType } from '@/types/view';
-import type { Project, View, Item } from '@/types';
+import { Box } from 'ink';
+import React from 'react';
 
 type Props = {
   projects: Project[];
   selectedProjectId: number | null;
-  onSelectProject: (id: number | null) => void;
+  onSelectProjectId: (id: number | null) => void;
+  onSelectTodo: (id: number | null) => void;
 };
 
-const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProject }) => {
+const ListLayout: React.FC<Props> = ({
+  projects,
+  selectedProjectId,
+  onSelectProjectId,
+  onSelectTodo,
+}) => {
   const navItems = [
     { label: 'Home', value: 'home' },
     ...projects.map((p) => ({
@@ -20,11 +25,15 @@ const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProj
     })),
   ];
 
-  const handleSelect = (item: Item) => {
+  const handleTodoSelect = (todoId: number) => {
+    onSelectTodo(todoId);
+  };
+
+  const handleProjectSelect = (item: Item) => {
     if (item.value === ViewType.Home) {
-      onSelectProject(null);
+      onSelectProjectId(null);
     } else {
-      onSelectProject(Number(item.value));
+      onSelectProjectId(Number(item.value));
     }
   };
 
@@ -43,8 +52,10 @@ const ListLayout: React.FC<Props> = ({ projects, selectedProjectId, onSelectProj
 
   return (
     <Box width="100%" height="100%" flexDirection="row" gap={2}>
-      <SideBar navItems={navItems} initialIndex={selectedIndex} onSelect={handleSelect} />
-      <ContentPane view={currentView} />
+      {currentView.type === ViewType.Home ? (
+        <SideBar navItems={navItems} initialIndex={selectedIndex} onSelect={handleProjectSelect} />
+      ) : null}
+      <ContentPane view={currentView} onSelect={handleTodoSelect} />
     </Box>
   );
 };

@@ -1,11 +1,11 @@
-import type { View } from '@/types/view';
-import type { Project, CreateProject } from '@/types/project';
-import type { Todo, CreateTodo } from '@/types/todo';
 import type { Issue } from '@/types/issue';
+import type { CreateProject, Project } from '@/types/project';
+import type { CreateTodo, UpdateTodo, Todo } from '@/types/todo';
+import type { View } from '@/types/view';
 
 type Item = {
   label: string;
   value: string;
 };
 
-export type { View, Project, CreateProject, Todo, CreateTodo, Issue, Item };
+export type { CreateProject, CreateTodo, UpdateTodo, Issue, Item, Project, Todo, View };

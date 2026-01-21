@@ -1,6 +1,6 @@
-import React from 'react';
 import type { CreateProject } from '@/types';
 import { type FormProps, Form } from 'ink-form';
+import React from 'react';
 
 const form: FormProps = {
   form: {
@@ -10,7 +10,7 @@ const form: FormProps = {
         title: 'Name & Description',
         fields: [
           { type: 'string', name: 'name', label: 'Name' },
-          { type: 'string', name: 'description', label: 'Description', required: false },
+          { type: 'string', name: 'description', label: 'Description' },
         ],
       },
     ],

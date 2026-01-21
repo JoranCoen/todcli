@@ -1,5 +1,5 @@
-import React from 'react';
 import { Box, Text, useInput } from 'ink';
+import React from 'react';
 
 type ConfirmationLayoutProps = {
   message: string;

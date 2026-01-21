@@ -1,4 +1,4 @@
-import type { Issue, Project } from '@/types';
+import type { Issue, Project, Todo } from '@/types';
 
 export type View =
   | { type: ViewType.Home }
@@ -6,7 +6,8 @@ export type View =
   | { type: ViewType.Confirmation; message: string }
   | { type: ViewType.Project; project: Project }
   | { type: ViewType.CreateProject }
-  | { type: ViewType.CreateTodo; project: Project };
+  | { type: ViewType.CreateTodo; project: Project }
+  | { type: ViewType.UpdateTodo; todo: Todo };
 
 export enum ViewType {
   Home = 'home',
@@ -15,4 +16,5 @@ export enum ViewType {
   Project = 'project',
   CreateProject = 'createProject',
   CreateTodo = 'createTodo',
+  UpdateTodo = 'updateTodo',
 }

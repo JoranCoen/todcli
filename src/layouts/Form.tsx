@@ -1,16 +1,22 @@
-import React, { type ReactElement } from 'react';
-import { Box } from 'ink';
+import type { View } from '@/types';
 import { IssueType } from '@/types/issue';
 import { ViewType } from '@/types/view';
-import type { View } from '@/types';
+import { Box } from 'ink';
+import React, { type ReactElement } from 'react';
 
-type FormLayoutProps<T> = {
+type FormLayoutProps<T, P> = {
   onSubmit: (data: T) => void;
   setView: (view: View) => void;
-  FormComponent: React.ComponentType<{ onSubmit: (data: T) => void }>;
+  FormComponent: React.ComponentType<P & { onSubmit: (data: T) => void }>;
+  formProps?: P;
 };
 
-function FormLayout<T>({ onSubmit, setView, FormComponent }: FormLayoutProps<T>): ReactElement {
+function FormLayout<T, P>({
+  onSubmit,
+  setView,
+  FormComponent,
+  formProps,
+}: FormLayoutProps<T, P>): ReactElement {
   const handleSubmit = (data: T) => {
     try {
       onSubmit(data);
@@ -35,7 +41,7 @@ function FormLayout<T>({ onSubmit, setView, FormComponent }: FormLayoutProps<T>)
       alignItems="center"
     >
       <Box width="60%" flexDirection="column">
-        <FormComponent onSubmit={handleSubmit} />
+        <FormComponent {...(formProps ?? ({} as P))} onSubmit={handleSubmit} />
       </Box>
     </Box>
   );

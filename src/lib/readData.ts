@@ -1,8 +1,8 @@
-import fs from 'fs';
-import { DATA_FILE, CONFIG_DIR } from '@/lib';
+import { CONFIG_DIR, DATA_FILE } from '@/lib';
+import type { Project, View } from '@/types';
 import { IssueType } from '@/types/issue';
 import { ViewType } from '@/types/view';
-import type { Project, View } from '@/types';
+import fs from 'fs';
 
 type ReadResult<T> = { ok: true; data: T } | { ok: false; view: View };
 

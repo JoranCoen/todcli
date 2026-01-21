@@ -13,6 +13,13 @@ export type CreateTodo = {
   status: TodoStatus;
 };
 
+export type UpdateTodo = {
+  id: number;
+  title: string;
+  description: string;
+  status: TodoStatus;
+};
+
 export enum TodoStatus {
   Pending = 'pending',
   InProgress = 'in_progress',

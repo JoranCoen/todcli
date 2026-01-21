@@ -1,7 +1,7 @@
-import React from 'react';
+import type { Item } from '@/types';
 import { Box } from 'ink';
 import SelectInput from 'ink-select-input';
-import type { Item } from '@/types';
+import React from 'react';
 
 type SideBarProps = {
   navItems: Item[];

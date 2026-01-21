@@ -1,3 +1,3 @@
-import ContentPane from '@/components/ui/ContentPane';
+import TodoTable from '@/components/ui/TodoTable';
 
-export { ContentPane };
+export { TodoTable };

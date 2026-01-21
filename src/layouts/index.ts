@@ -1,7 +1,7 @@
-import MainLayout from '@/layouts/Main';
-import ListLayout from '@/layouts/List';
+import ConfirmationLayout from '@/layouts/ConfirmationLayout';
 import FormLayout from '@/layouts/Form';
 import IssueLayout from '@/layouts/Issue';
-import ConfirmationLayout from '@/layouts/ConfirmationLayout';
+import ListLayout from '@/layouts/List';
+import MainLayout from '@/layouts/Main';
 
-export { MainLayout, ListLayout, FormLayout, IssueLayout, ConfirmationLayout };
+export { ConfirmationLayout, FormLayout, IssueLayout, ListLayout, MainLayout };

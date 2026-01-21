@@ -1,9 +1,9 @@
-import fs from 'fs';
-import { DATA_FILE, CONFIG_DIR } from '@/lib';
-import { TodoStatus } from '@/types/todo';
+import { CONFIG_DIR, DATA_FILE } from '@/lib';
+import type { CreateTodo, UpdateTodo, Project, Todo, View, CreateProject } from '@/types';
 import { IssueType } from '@/types/issue';
+import { TodoStatus } from '@/types/todo';
 import { ViewType } from '@/types/view';
-import type { Project, Todo, View } from '@/types';
+import fs from 'fs';
 
 type WriteResult = { ok: true; project: Project } | { ok: false; view: View };
 
@@ -18,7 +18,7 @@ function writeFile(data: Record<string, Project>) {
 }
 
 export const writeData = {
-  createProject(project: Partial<Project>): WriteResult {
+  createProject(project: CreateProject): WriteResult {
     const data = readData();
 
     const nextId = Object.values(data).reduce((max, p) => Math.max(max, p.id), 0) + 1;
@@ -38,7 +38,7 @@ export const writeData = {
     return { ok: true, project: newProject };
   },
 
-  createTodo(projectId: number, todo: Partial<Todo>): WriteResult {
+  createTodo(projectId: number, todo: CreateTodo): WriteResult {
     const data = readData();
 
     const projectKey = Object.keys(data).find((k) => data[k].id === projectId);
@@ -71,6 +71,54 @@ export const writeData = {
     };
 
     project.todos.push(newTodo);
+    project.updatedAt = new Date().toISOString();
+
+    writeFile(data);
+
+    return { ok: true, project };
+  },
+
+  updateTodo(projectId: number, todo: UpdateTodo): WriteResult {
+    const data = readData();
+
+    const projectKey = Object.keys(data).find((k) => data[k].id === projectId);
+
+    if (!projectKey) {
+      return {
+        ok: false,
+        view: {
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: `Project with ID ${projectId} not found`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    const project = data[projectKey];
+    const todoIndex = project.todos.findIndex((t) => t.id === todo.id);
+
+    if (todoIndex === -1) {
+      return {
+        ok: false,
+        view: {
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: `Todo with ID ${todo.id} not found in project ${project.name}`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    project.todos[todoIndex] = {
+      ...project.todos[todoIndex],
+      ...todo,
+      updatedAt: new Date().toISOString(),
+    };
     project.updatedAt = new Date().toISOString();
 
     writeFile(data);

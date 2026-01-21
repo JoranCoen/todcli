@@ -1,13 +1,7 @@
-import React from 'react';
-import { TodoStatus } from '@/types/todo';
 import type { CreateTodo } from '@/types';
+import { TodoStatus } from '@/types/todo';
 import { type FormProps, Form } from 'ink-form';
-
-const Options = [
-  { label: 'Pending', value: TodoStatus.Pending },
-  { label: 'In Progress', value: TodoStatus.InProgress },
-  { label: 'Completed', value: TodoStatus.Completed },
-];
+import React from 'react';
 
 const form: FormProps = {
   form: {
@@ -17,12 +11,16 @@ const form: FormProps = {
         title: 'Name & Description',
         fields: [
           { type: 'string', name: 'title', label: 'Title' },
-          { type: 'string', name: 'description', label: 'Description', required: false },
+          { type: 'string', name: 'description', label: 'Description' },
           {
             type: 'select',
             name: 'status',
             label: 'Status',
-            options: Options,
+            options: [
+              { label: 'Pending', value: TodoStatus.Pending },
+              { label: 'In Progress', value: TodoStatus.InProgress },
+              { label: 'Completed', value: TodoStatus.Completed },
+            ],
             initialValue: TodoStatus.Pending,
           },
         ],

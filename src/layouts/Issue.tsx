@@ -1,7 +1,7 @@
-import React from 'react';
-import { Box, Text } from 'ink';
-import type { Issue } from '@/types';
 import { issueColorMap } from '@/constants';
+import type { Issue } from '@/types';
+import { Box, Text } from 'ink';
+import React from 'react';
 
 type IssueLayoutProps = {
   issue: Issue;

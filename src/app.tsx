@@ -1,14 +1,15 @@
-import React, { useState } from 'react';
-import { useInput } from 'ink';
-import { MainLayout, FormLayout, ListLayout, IssueLayout, ConfirmationLayout } from '@/layouts';
-import { CreateProjectForm, CreateTodoForm } from '@/components/functional/forms';
-import { writeData, readProjects } from '@/lib';
+import { CreateProjectForm, CreateTodoForm, UpdateTodoForm } from '@/components/functional/forms';
+import { ConfirmationLayout, FormLayout, IssueLayout, ListLayout, MainLayout } from '@/layouts';
+import { readProjects, writeData } from '@/lib';
+import type { CreateProject, CreateTodo, Project, UpdateTodo, View } from '@/types';
 import { IssueType } from '@/types/issue';
 import { ViewType } from '@/types/view';
-import type { CreateProject, CreateTodo, Project, View } from '@/types';
+import { useInput } from 'ink';
+import React, { useState } from 'react';
 
 const App: React.FC = () => {
   const [view, setView] = useState<View>({ type: ViewType.Home });
+  const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
 
   const getProjects = (): Project[] => {
@@ -24,17 +25,10 @@ const App: React.FC = () => {
 
   const [projects, setProjects] = useState<Project[]>(getProjects());
   const selectedProject = projects.find((p) => p.id === selectedProjectId) ?? null;
+  const selectedTodo = selectedProject?.todos.find((t) => t.id === selectedTodoId) ?? null;
 
   useInput((input, key) => {
     if (key.escape) {
-      if (selectedProject) {
-        setView({
-          type: 'project',
-          project: selectedProject,
-        });
-        return;
-      }
-
       setSelectedProjectId(null);
       setView({ type: ViewType.Home });
     }
@@ -57,6 +51,22 @@ const App: React.FC = () => {
       }
 
       setView({ type: ViewType.CreateTodo, project: selectedProject });
+    }
+
+    if (key.ctrl && input === 's') {
+      if (!selectedTodo) {
+        setView({
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: 'No todo selected',
+            type: IssueType.Error,
+          },
+        });
+        return;
+      }
+
+      setView({ type: ViewType.UpdateTodo, todo: selectedTodo });
     }
 
     if (key.ctrl && input === 'd') {
@@ -107,6 +117,21 @@ const App: React.FC = () => {
     setView({ type: ViewType.Project, project: result.project });
   };
 
+  const handleUpdateTodo = (data: UpdateTodo) => {
+    if (!selectedProject) return;
+
+    const result = writeData.updateTodo(selectedProject.id, data);
+
+    if (!result.ok) {
+      setView(result.view);
+      return;
+    }
+
+    setProjects(getProjects());
+    setSelectedProjectId(result.project.id);
+    setView({ type: ViewType.Project, project: result.project });
+  };
+
   const handleConfirmation = (confirmed: boolean) => {
     if (!selectedProject) return;
 
@@ -128,16 +153,16 @@ const App: React.FC = () => {
 
   return (
     <MainLayout>
-      {view.type === 'issue' && <IssueLayout issue={view.issue} />}
+      {view.type === ViewType.Issue && <IssueLayout issue={view.issue} />}
 
-      {view.type === 'confirmation' && selectedProject && (
+      {view.type === ViewType.Confirmation && selectedProject && (
         <ConfirmationLayout
           message={`Are you sure you want to delete project "${selectedProject.name}"?`}
           setConfirmation={handleConfirmation}
         />
       )}
 
-      {view.type === 'createProject' && (
+      {view.type === ViewType.CreateProject && (
         <FormLayout
           FormComponent={CreateProjectForm}
           onSubmit={handleCreateProject}
@@ -145,15 +170,25 @@ const App: React.FC = () => {
         />
       )}
 
-      {view.type === 'createTodo' && selectedProject && (
+      {view.type === ViewType.CreateTodo && selectedProject && (
         <FormLayout FormComponent={CreateTodoForm} onSubmit={handleCreateTodo} setView={setView} />
       )}
 
-      {(view.type === 'home' || view.type === 'project') && (
+      {view.type === ViewType.UpdateTodo && selectedProject && selectedTodo && (
+        <FormLayout
+          FormComponent={UpdateTodoForm}
+          formProps={{ todo: selectedTodo }}
+          onSubmit={handleUpdateTodo}
+          setView={setView}
+        />
+      )}
+
+      {(view.type === ViewType.Home || view.type === ViewType.Project) && (
         <ListLayout
           projects={projects}
           selectedProjectId={selectedProjectId}
-          onSelectProject={setSelectedProjectId}
+          onSelectProjectId={setSelectedProjectId}
+          onSelectTodo={setSelectedTodoId}
         />
       )}
     </MainLayout>
