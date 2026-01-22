@@ -8,6 +8,7 @@ import { useApp, useInput } from 'ink';
 import React, { useState } from 'react';
 
 const App: React.FC = () => {
+  const app = useApp();
   const [view, setView] = useState<View>({ type: ViewType.Home });
   const [selectedTodoId, setSelectedTodoId] = useState<number | null>(null);
   const [selectedProjectId, setSelectedProjectId] = useState<number | null>(null);
@@ -29,22 +30,10 @@ const App: React.FC = () => {
 
   useInput((input, key) => {
     if (key.ctrl && input === 'q') {
-      useApp().exit();
+      app.exit();
     }
 
-    if (key.ctrl && input === 'h') {
-      if (selectedProject) {
-        setSelectedProjectId(null);
-        setView({ type: ViewType.Project, project: selectedProject });
-        return;
-      }
-    }
-
-    if (key.escape) {
-      if (selectedProject) {
-        setView({ type: ViewType.Project, project: selectedProject });
-        return;
-      }
+    if (key.ctrl && input === 's') {
       setSelectedProjectId(null);
       setView({ type: ViewType.Home });
     }
@@ -69,22 +58,6 @@ const App: React.FC = () => {
       setView({ type: ViewType.CreateTodo, project: selectedProject });
     }
 
-    if (key.ctrl && input === 's') {
-      if (!selectedTodo) {
-        setView({
-          type: ViewType.Issue,
-          issue: {
-            label: 'Error',
-            content: 'No todo selected',
-            type: IssueType.Error,
-          },
-        });
-        return;
-      }
-
-      setView({ type: ViewType.UpdateTodo, todo: selectedTodo });
-    }
-
     if (key.ctrl && input === 'd') {
       if (!selectedProject) {
         setView({
@@ -102,6 +75,30 @@ const App: React.FC = () => {
         type: ViewType.Confirmation,
         message: `Are you sure you want to delete project "${selectedProject.name}"?`,
       });
+    }
+
+    if (key.escape) {
+      if (selectedProject) {
+        setView({ type: ViewType.Project, project: selectedProject });
+      }
+    }
+
+    if (key.return) {
+      if (!selectedTodo && view.type === ViewType.Project) {
+        setView({
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: 'No todo selected',
+            type: IssueType.Error,
+          },
+        });
+        return;
+      }
+
+      if (selectedTodo) {
+        setView({ type: ViewType.UpdateTodo, todo: selectedTodo });
+      }
     }
   });
 

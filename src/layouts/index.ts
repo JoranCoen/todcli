@@ -1,4 +1,4 @@
-import ConfirmationLayout from '@/layouts/ConfirmationLayout';
+import ConfirmationLayout from '@/layouts/Confirmation';
 import FormLayout from '@/layouts/Form';
 import IssueLayout from '@/layouts/Issue';
 import ListLayout from '@/layouts/List';
