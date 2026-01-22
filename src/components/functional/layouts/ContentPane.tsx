@@ -41,7 +41,7 @@ const ContentPane: React.FC<ContentPaneProps> = ({ view, onSelect }) => {
         60,
       )} | ${formatStatus(todo.status).padEnd(12)} | ${new Date(
         todo.createdAt,
-      ).toLocaleDateString()} | ${new Date(todo.updatedAt).toLocaleDateString()}`,
+      ).toLocaleString()} | ${new Date(todo.updatedAt).toLocaleString()}`,
       value: todo.id.toString(),
     }));
 

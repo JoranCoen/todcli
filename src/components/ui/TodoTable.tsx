@@ -16,8 +16,8 @@ const TodoTable: React.FC<TodoTableProps> = ({ tableItems, onSelect }) => {
           <Text bold>{'Title'.padEnd(33)}</Text>
           <Text bold>{'Description'.padEnd(63)}</Text>
           <Text bold>{'Status'.padEnd(15)}</Text>
-          <Text bold>{'Created'.padEnd(12)}</Text>
-          <Text bold>{'Updated'.padEnd(12)}</Text>
+          <Text bold>{'Created'.padEnd(24)}</Text>
+          <Text bold>{'Updated'.padEnd(24)}</Text>
         </Box>
         <SelectInput items={tableItems} onSelect={onSelect} />
       </Box>
