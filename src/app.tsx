@@ -1,10 +1,10 @@
 import { CreateProjectForm, CreateTodoForm, UpdateTodoForm } from '@/components/functional/forms';
 import { ConfirmationLayout, FormLayout, IssueLayout, ListLayout, MainLayout } from '@/layouts';
 import { readProjects, writeData } from '@/lib';
-import type { CreateProject, CreateTodo, Project, UpdateTodo, View } from '@/types';
+import type { CreateProject, CreateTodo, Item, Project, UpdateTodo, View } from '@/types';
 import { IssueType } from '@/types/issue';
 import { ViewType } from '@/types/view';
-import { useInput } from 'ink';
+import { useApp, useInput } from 'ink';
 import React, { useState } from 'react';
 
 const App: React.FC = () => {
@@ -28,7 +28,23 @@ const App: React.FC = () => {
   const selectedTodo = selectedProject?.todos.find((t) => t.id === selectedTodoId) ?? null;
 
   useInput((input, key) => {
+    if (key.ctrl && input === 'q') {
+      useApp().exit();
+    }
+
+    if (key.ctrl && input === 'h') {
+      if (selectedProject) {
+        setSelectedProjectId(null);
+        setView({ type: ViewType.Project, project: selectedProject });
+        return;
+      }
+    }
+
     if (key.escape) {
+      if (selectedProject) {
+        setView({ type: ViewType.Project, project: selectedProject });
+        return;
+      }
       setSelectedProjectId(null);
       setView({ type: ViewType.Home });
     }
@@ -132,6 +148,18 @@ const App: React.FC = () => {
     setView({ type: ViewType.Project, project: result.project });
   };
 
+  const handleTodoSelect = (todoId: number) => {
+    setSelectedTodoId(todoId);
+  };
+
+  const handleProjectSelect = (item: Item) => {
+    if (item.value === ViewType.Home) {
+      setSelectedProjectId(null);
+    } else {
+      setSelectedProjectId(Number(item.value));
+    }
+  };
+
   const handleConfirmation = (confirmed: boolean) => {
     if (!selectedProject) return;
 
@@ -186,9 +214,9 @@ const App: React.FC = () => {
       {(view.type === ViewType.Home || view.type === ViewType.Project) && (
         <ListLayout
           projects={projects}
-          selectedProjectId={selectedProjectId}
-          onSelectProjectId={setSelectedProjectId}
-          onSelectTodo={setSelectedTodoId}
+          selectedProject={selectedProjectId}
+          onSelectProject={handleProjectSelect}
+          onSelectTodo={handleTodoSelect}
         />
       )}
     </MainLayout>
