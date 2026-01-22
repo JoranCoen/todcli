@@ -1,13 +1,14 @@
-import type { View } from '@/types';
+import type { Item, Todo, View } from '@/types';
 import { TodoTable } from '@/components/ui';
 import { ViewType } from '@/types/view';
 import { Box, Text } from 'ink';
 import Gradient from 'ink-gradient';
 import React from 'react';
+import { TodoStatus } from '@/types/todo';
 
 type ContentPaneProps = {
   view: View;
-  onSelect: (todo: number) => void;
+  onSelect: (item: Item) => void;
 };
 
 const ContentPane: React.FC<ContentPaneProps> = ({ view, onSelect }) => {
@@ -25,6 +26,25 @@ const ContentPane: React.FC<ContentPaneProps> = ({ view, onSelect }) => {
   }
 
   if (view.type === ViewType.Project) {
+    const truncate = (text: string, maxLength: number) =>
+      text.length > maxLength ? text.slice(0, maxLength - 1) + '…' : text;
+
+    const formatStatus = (status: TodoStatus) =>
+      status === TodoStatus.Completed
+        ? 'Completed'
+        : status === TodoStatus.InProgress
+          ? 'In Progress'
+          : 'Pending';
+
+    const tableItems: Item[] = view.project.todos.map((todo: Todo) => ({
+      label: `${truncate(todo.title, 30).padEnd(30)} | ${truncate(todo.description, 60).padEnd(
+        60,
+      )} | ${formatStatus(todo.status).padEnd(12)} | ${new Date(
+        todo.createdAt,
+      ).toLocaleDateString()} | ${new Date(todo.updatedAt).toLocaleDateString()}`,
+      value: todo.id.toString(),
+    }));
+
     return (
       <Box borderStyle="round" width="100%" height="100%" flexDirection="column" paddingX={3}>
         <Box paddingY={1}>
@@ -37,7 +57,7 @@ const ContentPane: React.FC<ContentPaneProps> = ({ view, onSelect }) => {
           {view.project.todos.length === 0 ? (
             <Text color="yellow">No todos found for this project.</Text>
           ) : (
-            <TodoTable data={view.project.todos} onSelect={onSelect} />
+            <TodoTable tableItems={tableItems} onSelect={onSelect} />
           )}
         </Box>
       </Box>

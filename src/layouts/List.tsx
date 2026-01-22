@@ -6,43 +6,37 @@ import React from 'react';
 
 type Props = {
   projects: Project[];
-  selectedProject: number | null;
+  selectedProjectId: number | null;
   onSelectProject: (item: Item) => void;
-  onSelectTodo: (todoId: number) => void;
+  onSelectTodo: (item: Item) => void;
 };
 
 const ListLayout: React.FC<Props> = ({
   projects,
-  selectedProject,
+  selectedProjectId,
   onSelectProject,
   onSelectTodo,
 }) => {
   const navItems = [
     { label: 'Home', value: 'home' },
-    ...projects.map((p) => ({
-      label: p.name,
-      value: String(p.id),
+    ...projects.map((project: Project) => ({
+      label: project.name,
+      value: String(project.id),
     })),
   ];
-  
-
-  const selectedIndex =
-    selectedProject != null
-      ? navItems.findIndex((i) => i.value === String(selectedProject))
-      : 0;
 
   const currentView: View =
-    selectedProject != null
+    selectedProjectId != null
       ? {
           type: ViewType.Project,
-          project: projects.find((p) => p.id === selectedProject)!,
+          project: projects.find((p) => p.id === selectedProjectId)!,
         }
       : { type: ViewType.Home };
 
   return (
     <Box width="100%" height="100%" flexDirection="row" gap={2}>
       {currentView.type === ViewType.Home ? (
-        <SideBar navItems={navItems} initialIndex={selectedIndex} onSelect={onSelectProject} />
+        <SideBar navItems={navItems} onSelect={onSelectProject} />
       ) : null}
       <ContentPane view={currentView} onSelect={onSelectTodo} />
     </Box>

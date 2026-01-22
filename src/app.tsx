@@ -29,13 +29,13 @@ const App: React.FC = () => {
   const selectedTodo = selectedProject?.todos.find((t) => t.id === selectedTodoId) ?? null;
 
   useInput((input, key) => {
-    if (key.ctrl && input === 'q') {
-      app.exit();
-    }
-
-    if (key.ctrl && input === 's') {
+    if (key.escape) {
       setSelectedProjectId(null);
       setView({ type: ViewType.Home });
+    }
+
+    if (key.ctrl && input === 'q') {
+      app.exit();
     }
 
     if (key.ctrl && input === 'a') {
@@ -75,30 +75,6 @@ const App: React.FC = () => {
         type: ViewType.Confirmation,
         message: `Are you sure you want to delete project "${selectedProject.name}"?`,
       });
-    }
-
-    if (key.escape) {
-      if (selectedProject) {
-        setView({ type: ViewType.Project, project: selectedProject });
-      }
-    }
-
-    if (key.return) {
-      if (!selectedTodo && view.type === ViewType.Project) {
-        setView({
-          type: ViewType.Issue,
-          issue: {
-            label: 'Error',
-            content: 'No todo selected',
-            type: IssueType.Error,
-          },
-        });
-        return;
-      }
-
-      if (selectedTodo) {
-        setView({ type: ViewType.UpdateTodo, todo: selectedTodo });
-      }
     }
   });
 
@@ -145,8 +121,15 @@ const App: React.FC = () => {
     setView({ type: ViewType.Project, project: result.project });
   };
 
-  const handleTodoSelect = (todoId: number) => {
-    setSelectedTodoId(todoId);
+  const handleTodoSelect = (item: Item) => {
+    if (item.value === ViewType.Home) {
+      setSelectedTodoId(null);
+    } else {
+      setSelectedTodoId(Number(item.value));
+      if (selectedTodo) {
+        setView({ type: ViewType.UpdateTodo, todo: selectedTodo });
+      }
+    }
   };
 
   const handleProjectSelect = (item: Item) => {
@@ -170,9 +153,8 @@ const App: React.FC = () => {
       setProjects(getProjects());
       setSelectedProjectId(null);
       setView({ type: ViewType.Home });
-    } else {
-      setView({ type: ViewType.Project, project: selectedProject });
     }
+
     setView({ type: ViewType.Project, project: selectedProject });
   };
 
@@ -211,7 +193,7 @@ const App: React.FC = () => {
       {(view.type === ViewType.Home || view.type === ViewType.Project) && (
         <ListLayout
           projects={projects}
-          selectedProject={selectedProjectId}
+          selectedProjectId={selectedProjectId}
           onSelectProject={handleProjectSelect}
           onSelectTodo={handleTodoSelect}
         />
