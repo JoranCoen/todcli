@@ -42,16 +42,22 @@ const App: React.FC = () => {
 
   useInput((input, key) => {
     if (key.escape) {
+      if (
+        view.type === ViewType.Issue ||
+        view.type === ViewType.Confirmation ||
+        view.type === ViewType.CreateProject
+      ) {
+        setView({ type: ViewType.Home });
+        return;
+      }
+
       if (view.type === ViewType.Project) {
         setSelectedProjectId(null);
         setView({ type: ViewType.Home });
         return;
       }
 
-      if (
-        selectedProject &&
-        (view.type === ViewType.UpdateTodo || view.type === ViewType.CreateTodo)
-      ) {
+      if (selectedProject && view.type === ViewType.UpdateTodo) {
         setView({ type: ViewType.Project, project: selectedProject });
         return;
       }
@@ -235,6 +241,8 @@ const App: React.FC = () => {
 
   return (
     <MainLayout>
+      <Text>{view.type}</Text>
+
       {view.type === ViewType.Issue && <IssueLayout issue={view.issue} />}
 
       {view.type === ViewType.Confirmation && view.target === 'project' && selectedProject && (
@@ -286,8 +294,6 @@ const App: React.FC = () => {
           onHighlightTodo={handleTodoHighlight}
         />
       )}
-
-      <Text>{view.type}</Text>
     </MainLayout>
   );
 };

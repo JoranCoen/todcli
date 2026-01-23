@@ -11,8 +11,8 @@ type TodoTableProps = {
 };
 
 const TodoTable: React.FC<TodoTableProps> = ({ todos, onSelect, onHighlight }) => {
-  const MAX_TITLE = 19;
-  const MAX_DESC = 70;
+  const MAX_TITLE = 15;
+  const MAX_DESC = 65;
   const MAX_STATUS = 12;
   const MAX_DATE = 10;
 
