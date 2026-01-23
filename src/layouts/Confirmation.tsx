@@ -1,18 +1,20 @@
+import { ConfirmationType } from '@/types/view';
 import { Box, Text, useInput } from 'ink';
 import React from 'react';
 
 type ConfirmationLayoutProps = {
   message: string;
-  setConfirmation: (confirmation: boolean) => void;
+  target: ConfirmationType;
+  setConfirmation: (confirmation: boolean, target: ConfirmationType) => void;
 };
 
-const ConfirmationLayout: React.FC<ConfirmationLayoutProps> = ({ message, setConfirmation }) => {
+const ConfirmationLayout: React.FC<ConfirmationLayoutProps> = ({ message, target, setConfirmation }) => {
   useInput((input, key) => {
     if (input.toLowerCase() === 'y') {
-      setConfirmation(true);
+      setConfirmation(true, target);
     }
     if (input.toLowerCase() === 'n' || key.escape) {
-      setConfirmation(false);
+      setConfirmation(false, target);
     }
   });
 

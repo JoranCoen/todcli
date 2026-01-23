@@ -1,26 +1,84 @@
-import React from 'react';
-import { Text, Box } from 'ink';
+import type { Item, Todo } from '@/types';
+import { TodoStatus } from '@/types/todo';
+import { Box, Text } from 'ink';
 import SelectInput from 'ink-select-input';
-import type { Item } from '@/types';
+import React from 'react';
 
 type TodoTableProps = {
-  tableItems: Item[];
+  todos: Todo[];
   onSelect: (item: Item) => void;
+  onHighlight: (item: Item) => void;
 };
 
-const TodoTable: React.FC<TodoTableProps> = ({ tableItems, onSelect }) => {
+const TodoTable: React.FC<TodoTableProps> = ({ todos, onSelect, onHighlight }) => {
+  const MAX_TITLE = 19;
+  const MAX_DESC = 70;
+  const MAX_STATUS = 12;
+  const MAX_DATE = 10;
+
+  const formatCell = (text: string, maxLength: number) => {
+    const trimmed = text.trim();
+    return trimmed.length > maxLength ? trimmed.slice(0, maxLength) + '…' : trimmed;
+  };
+
+  const formatStatus = (status: TodoStatus) =>
+    status === TodoStatus.Completed
+      ? 'Completed'
+      : status === TodoStatus.InProgress
+        ? 'In Progress'
+        : 'Pending';
+
+  const renderRow = (columns: string[], colWidths: number[]) =>
+    columns.map((c, i) => c.padEnd(colWidths[i])).join(' | ');
+
+  const col = {
+    title: Math.max('Title'.length, ...todos.map((t) => formatCell(t.title, MAX_TITLE).length)),
+    description: Math.max(
+      'Description'.length,
+      ...todos.map((t) => formatCell(t.description, MAX_DESC).length),
+    ),
+    status: Math.max(
+      'Status'.length,
+      ...todos.map((t) => formatCell(formatStatus(t.status), MAX_STATUS).length),
+    ),
+    created: Math.max(
+      'Created'.length,
+      ...todos.map((t) => formatCell(new Date(t.createdAt).toLocaleDateString(), MAX_DATE).length),
+    ),
+    updated: Math.max(
+      'Updated'.length,
+      ...todos.map((t) => formatCell(new Date(t.updatedAt).toLocaleDateString(), MAX_DATE).length),
+    ),
+  };
+
+  const colWidths = [col.title, col.description, col.status, col.created, col.updated];
+  const totalWidth = colWidths.reduce((a, b) => a + b, 0) + (colWidths.length - 1) * 3;
+
+  const tableItems: Item[] = todos.map((todo) => ({
+    value: todo.id.toString(),
+    label: renderRow(
+      [
+        formatCell(todo.title, MAX_TITLE),
+        formatCell(todo.description, MAX_DESC),
+        formatCell(formatStatus(todo.status), MAX_STATUS),
+        formatCell(new Date(todo.createdAt).toLocaleDateString(), MAX_DATE),
+        formatCell(new Date(todo.updatedAt).toLocaleDateString(), MAX_DATE),
+      ],
+      colWidths,
+    ),
+  }));
+
   return (
-    <Box flexDirection="column">
-      <Box borderStyle="round" paddingX={1} flexDirection="column">
-        <Box>
-          <Text bold>{'Title'.padEnd(33)}</Text>
-          <Text bold>{'Description'.padEnd(63)}</Text>
-          <Text bold>{'Status'.padEnd(15)}</Text>
-          <Text bold>{'Created'.padEnd(24)}</Text>
-          <Text bold>{'Updated'.padEnd(24)}</Text>
-        </Box>
-        <SelectInput items={tableItems} onSelect={onSelect} />
+    <Box flexDirection="column" borderStyle="round" paddingX={1}>
+      <Box marginLeft={2} flexDirection="column">
+        <Text bold>
+          {renderRow(['Title', 'Description', 'Status', 'Created', 'Updated'], colWidths)}
+        </Text>
+
+        <Text dimColor>{'─'.repeat(totalWidth)}</Text>
       </Box>
+
+      <SelectInput items={tableItems} onSelect={onSelect} onHighlight={onHighlight} />
     </Box>
   );
 };

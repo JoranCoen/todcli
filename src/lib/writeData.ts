@@ -152,4 +152,48 @@ export const writeData = {
 
     return { ok: true, project };
   },
+
+  deleteTodo(projectId: number, todoId: number): WriteResult {
+    const data = readData();
+
+    const projectKey = Object.keys(data).find((k) => data[k].id === projectId);
+
+    if (!projectKey) {
+      return {
+        ok: false,
+        view: {
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: `Project with ID ${projectId} not found`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    const project = data[projectKey];
+    const todoIndex = project.todos.findIndex((t) => t.id === todoId);
+
+    if (todoIndex === -1) {
+      return {
+        ok: false,
+        view: {
+          type: ViewType.Issue,
+          issue: {
+            label: 'Error',
+            content: `Todo with ID ${todoId} not found in project ${project.name}`,
+            type: IssueType.Error,
+          },
+        },
+      };
+    }
+
+    project.todos.splice(todoIndex, 1);
+    project.updatedAt = new Date().toISOString();
+
+    writeFile(data);
+
+    return { ok: true, project };
+  }
 };
